@@ -1,0 +1,18 @@
+import * as React from "react"
+
+function CalcIcon(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24px"
+      viewBox="0 -960 960 960"
+      width="24px"
+      fill="#1f1f1f"
+      {...props}
+    >
+      <path d="M240-160v-80l260-240-260-240v-80h480v120H431l215 200-215 200h289v120H240z" />
+    </svg>
+  )
+}
+
+export default CalcIcon
