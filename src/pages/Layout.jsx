@@ -37,7 +37,7 @@ const SubMenuComponent = ({noItems, isShown})=>{
 
 
 
-const DropDownMenuComponent = ({items, children, id}) => {
+const DropDownMenuComponent = ({items, children, numid, clickHandler}) => {
 
     const [isShown , setShown] = useState(false);
 
@@ -49,7 +49,7 @@ const DropDownMenuComponent = ({items, children, id}) => {
     }
     
     return (
-        <li numId ={id}>
+        <li numid = {numid} onClick={clickHandler}>
             <button 
             className = { isShown? "dropdown-btn rotate":"dropdown-btn" }
             onClick = {handleClick}
@@ -62,22 +62,41 @@ const DropDownMenuComponent = ({items, children, id}) => {
     )
 }
 
+function getAttributeLevel(parent, attribute,  level,  currentLevel,){
+        if(!parent.hasAttribute() && currentLevel < level)
+            return getAttributeLevel(parent.parentElement,attribute, level, ++currentLevel)
+        return parent.getAttribute(attribute);
+}
+
 
 const Layout = () =>{
-
+    
+    const listItems = document.querySelectorAll(".navigation > li")
     const toggleButton = document.getElementById('toggle-btn');
     const sidebar = document.getElementById('sidebar');
 
-    const [activeIndex, setActiveIndex] = useState(0);
-    const listItems = document.querySelectorAll(".navigation > li")
-
-    function handleActiveIndex(event){
-        console.log(activeIndex)
-        // listItems[activeIndex].classList.toggle('active');
-        const newIndex = event.target.parentElement.getAttribute("numid");
-        setActiveIndex(newIndex);
-        listItems[newIndex].classList.toggle('active');
-    }
+    const [activeIndex, setActiveIndex] = useState(1);
+    
+    
+    function handleActiveIndex(e){
+        let newIndex;
+        
+        if(e.target.hasAttribute('numid'))
+            newIndex = e.target.getAttribute('numid')
+        else if(e.target.parentElement.hasAttribute('numid'))
+            newIndex = e.target.parentElement.getAttribute('numid')
+        else if(e.target.parentElement.parentElement.hasAttribute('numid'))
+            newIndex = e.target.parentElement.parentElement.getAttribute('numid')
+        else
+        newIndex = e.target.parentElement.parentElement.parentElement.getAttribute('numid');
+    console.log('Activbe index is:', activeIndex)
+    console.log("event target is", newIndex)
+    listItems[activeIndex].classList.toggle('active');
+    setActiveIndex(Number(newIndex));
+    listItems[newIndex].classList.toggle('active');
+    e.stopPropagation();
+    
+}
 
     function toggleSideBar(){
         sidebar.classList.toggle('close');
@@ -89,8 +108,8 @@ const Layout = () =>{
         <nav id = 'sidebar'>
         <ul 
         className = 'navigation' 
-        onClick={handleActiveIndex}
         >
+
             <li className = 'logo'>
                 <ConeCoreIcon></ConeCoreIcon>
                 conecore
@@ -101,21 +120,21 @@ const Layout = () =>{
                     <DoubleArrowIcon ></DoubleArrowIcon>
                 </button>
             </li>
-            <li className = 'active' numId = {1}>
+            <li className = 'active' numid = {1} onClick={handleActiveIndex}>
                 <NavLink to = '/'>
                     <HomeIcon></HomeIcon>
                     <span>Home</span>
                 </NavLink>
             </li>
 
-            <li numId = {2}>
+            <li numid = {2} onClick={handleActiveIndex}>
                 <NavLink to = '/Settings'>
                     <SettingsIcon></SettingsIcon>
                     <span>Settings</span>
                 </NavLink>
             </li>
 
-            <li numId = {3}>
+            <li numid = {3} onClick={handleActiveIndex}>
                 <NavLink to = '/Load'>
                     <LoadIcon></LoadIcon>
                     <span>Load</span>
@@ -130,13 +149,14 @@ const Layout = () =>{
                         <SingleArrowIcon></SingleArrowIcon>
                     </NavLink>
                 }
-                numId = {4}
+                numid = {4}
+                clickHandler={handleActiveIndex}
             >
 
             </DropDownMenuComponent>
 
             <DropDownMenuComponent
-            key = {2}
+
                 items = {5}
                 children = {
           
@@ -146,16 +166,17 @@ const Layout = () =>{
                         <SingleArrowIcon></SingleArrowIcon>
                     </NavLink>
                 }
-                numId = {5}
+                numid = {5}
+                clickHandler={handleActiveIndex}
             ></DropDownMenuComponent>
                 
-            <li numId = {6}>
+            <li numid = {6} onClick={handleActiveIndex}>
                 <NavLink to = '/Print'>
                     <PrintIcon></PrintIcon>
                     <span>Print</span>
                 </NavLink>
             </li>
-            <li numId = {7}>
+            <li numid = {7} onClick={handleActiveIndex}>
                 <NavLink to = '/Decompose'>
                     <DecomposeIcon></DecomposeIcon>
                     <span>Decompose</span>
