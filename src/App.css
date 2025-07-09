@@ -65,16 +65,7 @@ nav > ul > li:first-child{
 }
 
 
-nav ul li.active a{
-    color: var(--primary-color);
-    background-color:  var(--hover-color);
-    
-    svg{
-        fill: var(--primary-color);
-        stroke: var(--primary-color);
-    }; 
 
-}
 
 nav a, nav .dropdwn-btn, nav .logo{
     border-radius: .5em;
@@ -160,7 +151,7 @@ nav .sub-menu.show{
 }
 
 .dropdown-btn.rotate a svg{
-    fill:var(--text-color);
+    /* fill:var(--text-color); */
     svg:last-child{
 
         rotate:180deg;
@@ -169,8 +160,8 @@ nav .sub-menu.show{
 }
 
 .dropdown-btn.rotate > a{
-    color: var(--text-color);
-    background-color: var(--hover-color);
+    /* color: var(--text-color); */
+    /* background-color: var(--hover-color) */
 }
 
 .rotate svg:last-child{
@@ -205,4 +196,22 @@ nav .sub-menu{
     display:flex;
     gap:25px;
     /* align-content: space-around; */
+}
+
+nav ul li.active {
+    button {
+        background-color:  var(--hover-color);
+        color: var(--primary-color);
+        
+    }
+    
+    a.active {
+        color: var(--primary-color);
+    
+    }
+    
+    svg{
+        fill: var(--primary-color);
+        stroke: var(--primary-color);
+    }; 
 }

@@ -37,19 +37,19 @@ const SubMenuComponent = ({noItems, isShown})=>{
 
 
 
-const DropDownMenuComponent = ({items, children, numid, clickHandler}) => {
-
+const DropDownMenuComponent = ({items, children, id, handleIndex, activeIndex}) => {
     const [isShown , setShown] = useState(false);
-
     function handleClick(){
         setShown(!isShown);
-        // console.log(event.target.parentElement.parentElement.classList)
-        // isShown? subMenu.classList.remove("show") : subMenu.classList.add("show")
-        // event.target.parentElement.parentElement.classList.toggle('rotate')
     }
-    
     return (
-        <li numid = {numid} onClick={clickHandler}>
+        <li 
+        className = {activeIndex == id? 'active': ''}
+        onClick={(e)=>{
+            e.stopPropagation();
+            handleIndex(id)}
+        }
+        >
             <button 
             className = { isShown? "dropdown-btn rotate":"dropdown-btn" }
             onClick = {handleClick}
@@ -57,45 +57,23 @@ const DropDownMenuComponent = ({items, children, numid, clickHandler}) => {
                 {children}
             </button>
             <SubMenuComponent noItems ={items} isShown={isShown}></SubMenuComponent>
-
         </li>
     )
 }
 
-function getAttributeLevel(parent, attribute,  level,  currentLevel,){
-        if(!parent.hasAttribute() && currentLevel < level)
-            return getAttributeLevel(parent.parentElement,attribute, level, ++currentLevel)
-        return parent.getAttribute(attribute);
-}
 
 
 const Layout = () =>{
     
-    const listItems = document.querySelectorAll(".navigation > li")
+   
     const toggleButton = document.getElementById('toggle-btn');
     const sidebar = document.getElementById('sidebar');
 
     const [activeIndex, setActiveIndex] = useState(1);
     
     
-    function handleActiveIndex(e){
-        let newIndex;
-        
-        if(e.target.hasAttribute('numid'))
-            newIndex = e.target.getAttribute('numid')
-        else if(e.target.parentElement.hasAttribute('numid'))
-            newIndex = e.target.parentElement.getAttribute('numid')
-        else if(e.target.parentElement.parentElement.hasAttribute('numid'))
-            newIndex = e.target.parentElement.parentElement.getAttribute('numid')
-        else
-        newIndex = e.target.parentElement.parentElement.parentElement.getAttribute('numid');
-    console.log('Activbe index is:', activeIndex)
-    console.log("event target is", newIndex)
-    listItems[activeIndex].classList.toggle('active');
-    setActiveIndex(Number(newIndex));
-    listItems[newIndex].classList.toggle('active');
-    e.stopPropagation();
-    
+    function handleActiveIndex(id){
+        setActiveIndex(id)
 }
 
     function toggleSideBar(){
@@ -106,9 +84,7 @@ const Layout = () =>{
     return(
         <>
         <nav id = 'sidebar'>
-        <ul 
-        className = 'navigation' 
-        >
+        <ul  className = 'navigation'>
 
             <li className = 'logo'>
                 <ConeCoreIcon></ConeCoreIcon>
@@ -120,21 +96,27 @@ const Layout = () =>{
                     <DoubleArrowIcon ></DoubleArrowIcon>
                 </button>
             </li>
-            <li className = 'active' numid = {1} onClick={handleActiveIndex}>
+            <li 
+            className = {activeIndex == 1? 'active': ''}
+            onClick={()=>handleActiveIndex(1)}>
                 <NavLink to = '/'>
                     <HomeIcon></HomeIcon>
                     <span>Home</span>
                 </NavLink>
             </li>
 
-            <li numid = {2} onClick={handleActiveIndex}>
+            <li 
+            className = {activeIndex == 2? 'active': ''}
+            onClick={()=>handleActiveIndex(2)}>
                 <NavLink to = '/Settings'>
                     <SettingsIcon></SettingsIcon>
                     <span>Settings</span>
                 </NavLink>
             </li>
 
-            <li numid = {3} onClick={handleActiveIndex}>
+            <li 
+            className = {activeIndex == 3? 'active': ''}
+            onClick={()=>handleActiveIndex(3)}>
                 <NavLink to = '/Load'>
                     <LoadIcon></LoadIcon>
                     <span>Load</span>
@@ -149,34 +131,38 @@ const Layout = () =>{
                         <SingleArrowIcon></SingleArrowIcon>
                     </NavLink>
                 }
-                numid = {4}
-                clickHandler={handleActiveIndex}
+                id = {4}
+                handleIndex={handleActiveIndex}
+                activeIndex = {activeIndex}
             >
 
             </DropDownMenuComponent>
 
             <DropDownMenuComponent
-
-                items = {5}
-                children = {
-          
-                    <NavLink to = '/Plot'>
-                        <PlotIcon></PlotIcon>                    
-                        <span>Plot</span>
-                        <SingleArrowIcon></SingleArrowIcon>
-                    </NavLink>
-                }
-                numid = {5}
-                clickHandler={handleActiveIndex}
+            items = {5}
+            children = {
+                <NavLink to = '/Plot'>
+                    <PlotIcon></PlotIcon>                    
+                    <span>Plot</span>
+                    <SingleArrowIcon></SingleArrowIcon>
+                </NavLink>
+            }
+            id = {5}
+            handleIndex={handleActiveIndex}
+            activeIndex = {activeIndex}
             ></DropDownMenuComponent>
                 
-            <li numid = {6} onClick={handleActiveIndex}>
+            <li
+            className = {activeIndex == 6? 'active': ''}
+            onClick={()=>handleActiveIndex(6)}>
                 <NavLink to = '/Print'>
                     <PrintIcon></PrintIcon>
                     <span>Print</span>
                 </NavLink>
             </li>
-            <li numid = {7} onClick={handleActiveIndex}>
+            <li 
+            className = {activeIndex == 7? 'active': ''}
+            onClick={()=>handleActiveIndex(7)}>
                 <NavLink to = '/Decompose'>
                     <DecomposeIcon></DecomposeIcon>
                     <span>Decompose</span>
