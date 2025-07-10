@@ -15,6 +15,7 @@ import SubdirectoryArrowIcon from '../assets/icons/SubDirectoryIcon';
 
 
 
+
 const SubMenuComponent = ({noItems, isShown})=>{
 
     const items = [];
@@ -87,8 +88,8 @@ const Layout = () =>{
         <ul  className = 'navigation'>
 
             <li className = 'logo'>
-                <ConeCoreIcon></ConeCoreIcon>
-                conecore
+                {/* <ConeCoreIcon></ConeCoreIcon> */}
+                <span>conecore</span>
                 <button
                  id = "toggle-btn"
                 onClick={toggleSideBar}
