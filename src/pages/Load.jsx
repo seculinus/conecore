@@ -1,27 +1,37 @@
 
 import './Load.css'
+import {read, utils} from 'xlsx';;
+
+function processHeader(workbook){
+    
+    const headerName = 'Header';
+    const sheet = workbook.Sheets[headerName];
+    const jsonData = utils.sheet_to_json(sheet, {header:"A", UTC:false, raw:false});
+    const newJson =  {};
+    jsonData.forEach((row)=>{newJson[row.A] = row.B})
+    
+    return newJson
+
+}
 
 function LoadMenu(){
     
     
-    function handleDrop(event){
+    async function handleDrop(event){
         console.log('File Dropped')
         event.preventDefault() // prevent file from being dropped
-        if(event.dataTransfer.items){
-            [...event.dataTransfer.items].forEach((item, i) =>{
-                //if drooped items arent files reject them
-                if (item.kind === "file"){
-                    const file = item.getAsFile();  
-                    console.log(`...file[${i}].name = ${file.name}`)
-                }
-            })
+        
+        const files = [...event.dataTransfer.files]
+
+        for(let f of files){
+
+            const data = await f.arrayBuffer();
+            const workbook = read(data);
+            processHeader(workbook)
+            console.log(`...file[${0}].name = ${f.name}`)
         }
-        else{
-            //Use data Tranfer interface to access the file(s)
-            
-            [...event.dataTransger.files].forEach((file, i) => {
-                console.log(`...file[${i}].name = ${file.name}`);})
-        }
+
+
     
     }
     function handleDragEnter(){
