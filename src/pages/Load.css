@@ -1,5 +1,36 @@
+@import '../constants.css';
+
+
+
+
 #drop_zone{
-    border:5px solid blue;
-    height:200px;
-    width:100%;
+    /* padding-left: 25px; */
+    border: 2px dotted  var(--inactive-color);
+    max-height: 180px;
+    /* width:70%; */
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+b{
+    color: var(--secondary-color);
+}
+
+.drop{
+    border: 5px solid blue;
+}
+
+.sxs{
+    border:1px solid red;
+}
+
+.drop-container{
+    padding-top: 10px;
+    display: flex;
+    scale:1.5;
+    fill:var(--secondary-color)
+ 
 }
