@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "./built",
+    "allowJs": true,
+    "target": "esnext",
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "strictNullChecks": false,
+"paths": {
+  "@/*": [
+    "./*"
+  ],
+  "react": [ "./node_modules/@types/react" ]
+},
+
+  },
+  "include": ["./src/**/*"]
+}
