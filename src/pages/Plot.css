@@ -4,3 +4,15 @@
     margin: none;
     padding:none;
 }
+
+
+.content {
+  padding-top: 10px;
+  transform: translate3d(calc(50% + 40px), 0, 0);
+  text-align: left;
+  background: #202035;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+

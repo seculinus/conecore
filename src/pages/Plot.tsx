@@ -2,18 +2,19 @@ import { parsePoints } from "../utils/point";
 import { Canvas, Color, Vector2, Vector3 } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useRef, useEffect, useState } from "react";
-import { OrbitControls, Grid, OrthographicCamera, PerspectiveCamera, useHelper, OrbitControlsProps , } from "@react-three/drei";
+import { OrbitControls, Grid, OrthographicCamera, PerspectiveCamera, useHelper, OrbitControlsProps, GizmoViewport, Html , } from "@react-three/drei";
 import * as THREE from 'three';
 
 import './Plot.css'
+type ThreeInput= [number, number, number]
 
 type CellBaseProps = {
-    position:[number,number,number] | THREE.Vector3,
+    position: ThreeInput | THREE.Vector3,
     size: [
         width?: number,
         height?:number,
     ]    
-    color: string;
+
 }
 
 function handlePointClick(){
@@ -21,23 +22,43 @@ function handlePointClick(){
         console.log(points)}
 
 
-function CellBase( {position,size, color}:CellBaseProps){
-
+function CellBase( {position,size}:CellBaseProps){
     const [isHovered, setIsHovered] = useState(false);
-
-
-
-    return (
+    // const ref = useRef<HTMLDivElement>(null!);
+    // if (typeof position === 'ThreeInput')
+        console.log('hiappy')
+    if (isHovered)
+        return (
+            <mesh 
+            position = {position}
+            rotation={[-Math.PI/2,0,0]}
+            onPointerEnter={()=>{setIsHovered(!isHovered)}}
+            onPointerLeave={()=>{setIsHovered(!isHovered)}}
+            scale = {isHovered? 1.1: 1}
+            >
+            
+            <Html distanceFactor = {7} position={[0,0,0]} >
+                <div className = "content" >
+                    {position instanceof THREE.Vector3? 
+                    `${position.x, position.y, position.z}`:
+                    `${position[0]}${position[1]}${position[2]}`}
+                </div>
+            </Html>
+                <planeGeometry args = {size} ></planeGeometry>
+                <meshStandardMaterial color = {isHovered? '#A1EED6': '#F2B694'}></meshStandardMaterial>
+            </mesh>
+        )
+    return(
         <mesh 
-        position = {position}
-        rotation={[-Math.PI/2,0,0]}
-        onPointerEnter={()=>{setIsHovered(!isHovered)}}
-        onPointerLeave={()=>{setIsHovered(!isHovered)}}
-        scale = {isHovered? 0.9 : 1}
-        >
-            <planeGeometry args = {size} ></planeGeometry>
-            <meshStandardMaterial color = {isHovered? 'pink': color}></meshStandardMaterial>
-        </mesh>
+            position = {position}
+            rotation={[-Math.PI/2,0,0]}
+            onPointerEnter={()=>{setIsHovered(!isHovered)}}
+            onPointerLeave={()=>{setIsHovered(!isHovered)}}
+            scale = {isHovered? 1.1: 1}
+            >
+                <planeGeometry args = {size} ></planeGeometry>
+                <meshStandardMaterial color = {isHovered? '#A1EED6': '#F2B694'}></meshStandardMaterial>
+            </mesh>
     )
 }
 
@@ -57,10 +78,10 @@ fadeStrength,
 fadeFrom,
     } = useControls({
   cellSize: {value: 0.5,min: 0,max: 55,step: 1,},
-  cellThickness: {value: 1,min: 0,max: 5,step: 0.1,},
+  cellThickness: {value: 0,min: 0,max: 5,step: 0.1,},
   cellColor: "#6f6f6f",
   sectionSize: {value: 2.5,min: 0,max: 50,step: 1},
-  sectionThickness: {value:1.5,min: 0,max: 5,step: 0.1,},
+  sectionThickness: {value:0,min: 0,max: 5,step: 0.1,},
   sectionColor:"#9d4b4b",
   followCamera: false,
   infiniteGrid: true,
@@ -82,8 +103,7 @@ fadeFrom,
         fadeStrength = {fadeStrength}
         fadeFrom = {fadeFrom}
     >
-        </Grid>
-
+    </Grid>
     )
 }
 
@@ -93,9 +113,7 @@ function Scene(){
 
       const camera = useRef<THREE.OrthographicCamera | null>(null);
       const controls = useRef<any>(null);
-
     //   useHelper(camera, THREE.CameraHelper);
-
       useEffect(()=>{
         if(camera.current && controls.current)
         {
@@ -136,11 +154,11 @@ function Scene(){
                 target={[0, 0, 0]}     // Look at the origin
                 enablePan={true}
                 enableZoom={true}
-                enableRotate={false}
+                // enableRotate={true}
             />
                 <ambientLight intensity = {2} color = 'white'></ambientLight> {/* Reduced intensity, 5.5 is very bright */}
-                <CellBase position ={[0,0,0]} size ={[1,1]} color ={'red'}></CellBase>
-                <CellBase position ={[1,0,1]}  size ={[1,1]} color ={'blue'}></CellBase>
+                <CellBase position ={[0,0,0]} size ={[1,1]} ></CellBase>
+                <CellBase position ={[1,0,1]}  size ={[1,1]} ></CellBase>
             </>
     )
 }
@@ -148,7 +166,7 @@ function Scene(){
 
 function Plot(){
     return(
-            <Canvas camera={{ position: [0, 10, 0] }}>
+            <Canvas camera={{ position: [0, 15, 0] }}>
                 <GridCells></GridCells>
                 <Scene>
                 </Scene>
