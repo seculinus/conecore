@@ -2,7 +2,7 @@ import './App.css'
 import ReactDOM from 'react-dom/client';
 import Layout from './pages/Layout'
 import Home from './pages/Home'
-import Plot from './pages/Plot'
+import Plot from './pages/plot/Plot'
 import NoPage from './pages/NoPage'
 import Load from './pages/Load';
 import Calc from './pages/Calc';
