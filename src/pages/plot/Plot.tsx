@@ -17,20 +17,19 @@ function handlePointClick() {
   console.log(points);
 }
 
-//Any??
 function CursorCoords() {
   const [position, setPosition] = useState(new THREE.Vector3(0, 0, 0));
-  const camera = useThree((state) => state.camera);
-
+  // const camera = useThree((state) => state.camera);
+  const { camera, raycaster, pointer } = useThree()
+  // const pointer = useThree(())
   useEffect(()=>{
     const handleMouse = (e:MouseEvent) =>{
-      const mouse = new THREE.Vector3();
-      const mouseX  = Number((e.clientX / window.innerWidth ));
-      const mouseY = Number((e.clientY / window.innerHeight ));
-      mouse.set(mouseX,  ( camera.near + camera.far ) / ( camera.near - camera.far ), mouseY)
-      mouse.unproject(camera);
-      console.log("is cursor fired?");
-      setPosition(mouse);
+
+      const coords = new THREE.Vector3();
+      raycaster.setFromCamera(pointer, camera);
+      const plane = new THREE.Plane(new THREE.Vector3(0,0,1));
+      raycaster.ray.intersectPlane(plane, coords);
+      setPosition(coords);
   }
   document.addEventListener("mousemove", handleMouse);
 
@@ -40,7 +39,7 @@ function CursorCoords() {
   return (
     <Html className="content" distanceFactor={7} position={[0, 3, 3]}>
       <div>
-        {`${(position.x).toFixed(2)}:${position.z.toFixed(2)}`}
+        {`${(position.x).toFixed(2)}:${position.y.toFixed(2)}`}
       </div>
     </Html>
   );
@@ -51,7 +50,6 @@ function CellBase({ position, size }: CellBaseProps) {
   return (
     <mesh
       position={position}
-      rotation={[-Math.PI / 2, 0, 0]}
       onPointerOver={() => {
         setIsHovered(true);
         // console.log("pointer enter");
@@ -87,7 +85,7 @@ function Scene(children : any) {
   useEffect(() => {
     if (camera.current && controls.current) {
       //Position camera above the XY plane
-      camera.current.position.set(0, 10, 0);
+      camera.current.position.set(0, 0, 10);
       camera.current.lookAt(0, 0, 0);
       //Points the controls target at the origin
       controls.current.target.set(0, 0, 0);
@@ -99,24 +97,26 @@ function Scene(children : any) {
 
   return (
     <>
-      <orthographicCamera ref={camera}position={[0, 10, 0]}left={-10}right={10}top={10}bottom={-10}near={0.1}far={100}/>
+      <orthographicCamera ref={camera}position={[0, 0, 10]}left={-10}right={10}top={10}bottom={-10}near={0.1}far={100}/>
       <OrbitControls ref={controls} target={[0, 0, 0]} enablePan={true} enableZoom={true} enableRotate={false}/>
       <ambientLight intensity={2} color="white"></ambientLight>{" "}
       <CellBase position={[0, 0, 0]} size={[1, 1]}></CellBase>
-      <CellBase position={[1, 0, 1]} size={[1, 1]}></CellBase>
+      <CellBase position={[1, 1, 0]} size={[1, 1]}></CellBase>
     </>
   );
 }
 
 function Plot() {
+  const container = useRef(null);
 
-  // const canvas = useThree((state) => state.scene);
   return (
-    <Canvas camera={{ position: [0, 15, 0] }} >
-      <CursorCoords/>
-      <GridCells/>
-      <Scene/>
-    </Canvas>
+    <div className = "wrapper" onPointerMove ={(e)=>(console.log(e.clientX))}>
+      <Canvas camera={{ position: [0, 0, 10] }}  ref = {container}>
+        <CursorCoords />
+        <GridCells/>
+        <Scene/>
+      </Canvas>
+    </div>
   );
 }
 

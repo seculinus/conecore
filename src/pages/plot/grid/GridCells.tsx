@@ -29,6 +29,7 @@ import { useControls } from "leva"
     })
         return(
         <Grid
+            rotation={[Math.PI/2,0,0]}
             cellSize = {cellSize}
             cellThickness = {cellThickness}
             cellColor = {cellColor}

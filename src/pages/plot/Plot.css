@@ -1,4 +1,4 @@
-.container{
+.wrapper{
     border:none;
     border-radius:none;
     margin: none;
@@ -16,3 +16,8 @@
   border-radius: 5px;
 }
 
+/* div{
+  margin:none;
+  width:100%;
+  height:100%;
+} */
