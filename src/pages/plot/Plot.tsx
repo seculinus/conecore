@@ -1,7 +1,7 @@
 import { parsePoints } from "../../utils/point";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, ThreeElement, useThree } from "@react-three/fiber";
 import { GridCells } from "./grid";
-import { useRef, useEffect, useState, Fragment } from "react";
+import { useRef, useEffect, useState, Fragment, ReactNode } from "react";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import "./Plot.css";
@@ -17,64 +17,26 @@ function handlePointClick() {
   console.log(points);
 }
 
-function CursorCoords() {
-  const [position, setPosition] = useState(new THREE.Vector3(0, 0, 0));
-  // const camera = useThree((state) => state.camera);
-  const { camera, raycaster, pointer } = useThree()
-  // const pointer = useThree(())
-  useEffect(()=>{
-    const handleMouse = (e:MouseEvent) =>{
-
-      const coords = new THREE.Vector3();
-      raycaster.setFromCamera(pointer, camera);
-      const plane = new THREE.Plane(new THREE.Vector3(0,0,1));
-      raycaster.ray.intersectPlane(plane, coords);
-      setPosition(coords);
-  }
-  document.addEventListener("mousemove", handleMouse);
-
-  return () =>{ document.removeEventListener("mousemove", handleMouse)}
-  },[])
-
-  return (
-    <Html className="content" distanceFactor={7} position={[0, 3, 3]}>
-      <div>
-        {`${(position.x).toFixed(2)}:${position.y.toFixed(2)}`}
-      </div>
-    </Html>
-  );
-}
-
 function CellBase({ position, size }: CellBaseProps) {
+  
   const [isHovered, setIsHovered] = useState(false);
+  const handlePointerOver = ()=>{setIsHovered(true)}
+  const handlePointerOut = ()=>{setIsHovered(false)}
+
   return (
-    <mesh
-      position={position}
-      onPointerOver={() => {
-        setIsHovered(true);
-        // console.log("pointer enter");
-      }}
-      onPointerOut={() => {
-        setIsHovered(false);
-        // console.log("pointerLeave");
-      }}
-      scale={isHovered ? 1.1 : 1}
-    >
+    <mesh position={position} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut} scale={isHovered ? 1.1 : 1}>
       <Html distanceFactor={7} position={[0, 0, 0]}>
-        {isHovered ? (
+        {isHovered ? 
           <div className="content">
             {position instanceof THREE.Vector3
               ? `${(position.x, position.y, position.z)}`
               : `${position[0]}${position[1]}${position[2]}`}
-          </div>
-        ) : (
+          </div> :
           <></>
-        )}
+        }
       </Html>
-      <planeGeometry args={size}></planeGeometry>
-      <meshStandardMaterial
-        color={isHovered ? "#A1EED6" : "#F2B694"}
-      ></meshStandardMaterial>
+      <planeGeometry args={size}/>
+      <meshStandardMaterial color={isHovered ? "#A1EED6" : "#F2B694"}/>
     </mesh>
   );
 }
@@ -97,7 +59,7 @@ function Scene(children : any) {
 
   return (
     <>
-      <orthographicCamera ref={camera}position={[0, 0, 10]}left={-10}right={10}top={10}bottom={-10}near={0.1}far={100}/>
+      {/* <orthographicCamera ref={camera} position={[0, 0, 10]} left={-10} right={10} top={10} bottom={-10} near={0.1} far={100}/> */}
       <OrbitControls ref={controls} target={[0, 0, 0]} enablePan={true} enableZoom={true} enableRotate={false}/>
       <ambientLight intensity={2} color="white"></ambientLight>{" "}
       <CellBase position={[0, 0, 0]} size={[1, 1]}></CellBase>
@@ -110,14 +72,43 @@ function Plot() {
   const container = useRef(null);
 
   return (
-    <div className = "wrapper" onPointerMove ={(e)=>(console.log(e.clientX))}>
-      <Canvas camera={{ position: [0, 0, 10] }}  ref = {container}>
-        <CursorCoords />
+
+    <Canvas camera={{ position: [0, 0, 10]} }  ref = {container}>
         <GridCells/>
+        <CursorTracker/>
         <Scene/>
-      </Canvas>
-    </div>
+        
+    </Canvas>
+
+    
   );
+}
+interface Props{
+  children?: ReactNode
+}
+
+
+
+function CursorTracker({children}:Props){
+  const [position, setPosition] = useState(new THREE.Vector3(0, 0, 0));
+  
+  return (
+     <>
+      <mesh 
+      position={[0,0,-0.1]} 
+      onPointerMove={(e)=>{setPosition(e.point)}}
+      >
+        <planeGeometry args ={[2e6,2e6]}/>
+        <meshBasicMaterial transparent opacity={0}/>
+      </mesh>
+      <Html className="content" distanceFactor={7} position={[0, 3, 3]}>
+        <div>
+          {`${(position.x).toFixed(2)}:${position.y.toFixed(2)}`}
+          {children}
+        </div>
+      </Html> 
+     </>
+  )
 }
 
 export default Plot;
