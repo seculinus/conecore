@@ -17,10 +17,10 @@ export function parsePoints(){
             const x = Number(header['E Coordinate']);
             const y = Number(header['N Coordinate']);
             const point = new Point(x,y, key);
-            // console.log(point)
             points.push(point);
+            // console.log(point.x,point.y)
         }
-    console.log("func exit")
+    
     return points;
     
 }
