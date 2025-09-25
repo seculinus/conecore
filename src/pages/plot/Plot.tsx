@@ -1,6 +1,6 @@
 import { parsePoints } from "../../utils/point";
 import { Canvas, ReactProps, ThreeElement, useThree } from "@react-three/fiber";
-import { GridCells,Node } from "./grid";
+import { GridCells,Node, Nodes } from "./grid";
 import { useRef, useEffect, useState, Fragment, ReactNode } from "react";
 import { OrbitControls, Html, OrbitControlsProps } from "@react-three/drei";
 import * as THREE from "three";
@@ -163,15 +163,11 @@ function Plot() {
     <Canvas  orthographic camera={{ 
       position: [0, 0, 10], 
       zoom:10}}  ref = {container}
-      onPointerMove={(e)=>(console.log(e.clientX, e.clientY))}
       >
-      <ambientLight intensity={10}/> 
-      {/* <GridCells/>
-      <Scene/> */}
-        <CursorTracker/>   
-        <Node position ={new THREE.Vector3(0,0,0)} color ='rgb(100,100,0)'></Node>
-        
-        {/* <Node position ={new THREE.Vector3(13,13,0)} color ='rgb(10,100,120)'></Node> */}
+      <ambientLight intensity={5}/> 
+
+      <CursorTracker/>   
+      <Nodes></Nodes>
     </Canvas>
   );
 }

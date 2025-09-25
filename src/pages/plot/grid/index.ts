@@ -1,7 +1,8 @@
 import GridCells from "./GridCells";
-import { Node } from "./Polyline";
+import { Node, Nodes } from "./Polyline";
 
 export {
     GridCells,
-    Node
+    Node,
+    Nodes,
 } 
