@@ -1,8 +1,53 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Ref } from "react";
 import { useDrag } from "@use-gesture/react";
 import * as THREE from 'three';
 import { useThree } from "@react-three/fiber";
 import { ReactProps } from "@react-three/fiber/dist/declarations/src/three-types";
+
+
+function computeGrids(){
+
+}
+
+
+
+
+function Grid({geom}:any){
+    const line : THREE.Line = geom.current; 
+    if (line){
+        line.geometry.computeBoundingBox();
+        const bb = line.geometry.boundingBox;
+        const [minX,maxX] = [bb.min.x, bb.max.x];
+        const [minY, maxY] =[bb.min.y, bb.max.y];
+        const spacing = .3;
+        const  grid : THREE.Vector3[][] = [];
+        for (let rowIndex = minX; rowIndex<maxX; rowIndex+=spacing){
+            const cells : THREE.Vector3[] = [];
+            for(let colIndex = minY; colIndex <maxY; colIndex+=spacing){
+                const point = new THREE.Vector3(rowIndex, colIndex, 0);
+                cells.push(point)
+       
+            }
+            grid.push(cells);}
+        
+        const gridPoints = grid.map(row =>{ return row.map(cell=>{ 
+            return <mesh position={cell}>
+                    <circleGeometry args ={[.1]} />
+                    <meshStandardMaterial color = {'silver'}/>
+                </mesh>
+            })})
+            
+        return (
+            <>
+            {gridPoints}
+            </> 
+        )
+    }
+
+    return(
+        <></>
+    )
+}
 
 export function Nodes({children}: ReactProps<Node>){
     const [positions, setPositions] = useState([
@@ -13,6 +58,7 @@ export function Nodes({children}: ReactProps<Node>){
         {id:4, position: new THREE.Vector3(25,1,0)},
         {id:5, position: new THREE.Vector3(-5,25,0)},
     ]);
+    const lineRef = useRef(null);
 
     const colors = [
         'rgba(226, 226, 19, 1)',
@@ -28,13 +74,15 @@ export function Nodes({children}: ReactProps<Node>){
         setPositions(newPositions);
     }
   
-    const lineGeoemetry = new THREE.BufferGeometry().setFromPoints([...positions.map(p=>p.position), positions[0].position])
+   const lineGeoemetry = new THREE.BufferGeometry().setFromPoints([...positions.map(p=>p.position), positions[0].position])
 
-    return (
+
+   return (
         <>
-        <line geometry ={lineGeoemetry} p>
+        <line geometry={lineGeoemetry} ref={lineRef} >
             <lineBasicMaterial attach = 'material' color ={'red'} ></lineBasicMaterial>
         </line>
+        <Grid geom ={lineRef}/>
             {positions.map((pos, i) => (
                 <Node 
                 key = {positions[i].id} 
