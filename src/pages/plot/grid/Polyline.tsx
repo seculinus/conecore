@@ -1,52 +1,70 @@
-import { useState, useEffect, useRef, Ref } from "react";
+import { useState, useEffect, useRef, Ref, useMemo } from "react";
 import { useDrag } from "@use-gesture/react";
 import * as THREE from 'three';
 import { useThree } from "@react-three/fiber";
 import { ReactProps } from "@react-three/fiber/dist/declarations/src/three-types";
+const spacing = 1;
 
+function computeGrids(box: THREE.Box3) : THREE.Vector3[]{
+    const [minX,maxX] = [box.min.x, box.max.x];
+    const [minY, maxY] =[box.min.y, box.max.y];
 
-function computeGrids(){
-
+    const  grid : THREE.Vector3[][] = [];
+    for (let rowIndex = minX; rowIndex<maxX; rowIndex+=spacing){
+    const cells : THREE.Vector3[] = [];
+        for(let colIndex = minY; colIndex <maxY; colIndex+=spacing){
+            const point = new THREE.Vector3(rowIndex, colIndex, 0);
+            cells.push(point)
+        }
+        grid.push(cells);
+    }
+    return grid.flat();
 }
 
-
-
-
-function Grid({geom}:any){
-    const line : THREE.Line = geom.current; 
-    if (line){
-        line.geometry.computeBoundingBox();
-        const bb = line.geometry.boundingBox;
-        const [minX,maxX] = [bb.min.x, bb.max.x];
-        const [minY, maxY] =[bb.min.y, bb.max.y];
-        const spacing = .3;
-        const  grid : THREE.Vector3[][] = [];
-        for (let rowIndex = minX; rowIndex<maxX; rowIndex+=spacing){
-            const cells : THREE.Vector3[] = [];
-            for(let colIndex = minY; colIndex <maxY; colIndex+=spacing){
-                const point = new THREE.Vector3(rowIndex, colIndex, 0);
-                cells.push(point)
-       
-            }
-            grid.push(cells);}
+function Grid({geom}: any) {
+    const line: THREE.Line = geom.current;
+    
+    // Memoize the geometry creation
+    const geometry = useMemo(() => {
+        if (!line?.geometry) return null;
         
-        const gridPoints = grid.map(row =>{ return row.map(cell=>{ 
-            return <mesh position={cell}>
-                    <circleGeometry args ={[.1]} />
-                    <meshStandardMaterial color = {'silver'}/>
-                </mesh>
-            })})
-            
-        return (
-            <>
-            {gridPoints}
-            </> 
-        )
-    }
+        line.geometry.computeBoundingBox();
+        const boundingBox = line.geometry.boundingBox;
+        if (!boundingBox) return null;
 
-    return(
-        <></>
-    )
+        const cachedGrid = computeGrids(boundingBox);
+        if (!cachedGrid || cachedGrid.length === 0) return null;
+
+        const geom = new THREE.BufferGeometry();
+        const array = new Float32Array(cachedGrid.length * 3);
+        
+        cachedGrid.forEach((pt, i) => {
+            array[i * 3] = pt.x;
+            array[i * 3 + 1] = pt.y;
+            array[i * 3 + 2] = pt.z;
+        });
+
+        geom.setAttribute('position', new THREE.BufferAttribute(array, 3));
+        geom.computeBoundingSphere();
+        return geom;
+    }, [line?.geometry.boundingBox]); // Only recreate when line changes
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (geometry) {
+                geometry.dispose();
+            }
+        };
+    }, [geometry]);
+
+    if (!geometry) return null;
+
+    return (
+        <points geometry={geometry}>
+            <pointsMaterial size={3} color="silver" />
+        </points>
+    );
 }
 
 export function Nodes({children}: ReactProps<Node>){
@@ -62,7 +80,7 @@ export function Nodes({children}: ReactProps<Node>){
 
     const colors = [
         'rgba(226, 226, 19, 1)',
-        'rgba(38, 73, 230, 0.93)',
+        'rgba(38, 73, 230, 1)',
         'rgba(253, 4, 4, 1)',
         'rgba(66, 179, 141, 1)',
         'rgba(233, 116, 248, 1)',
@@ -79,7 +97,7 @@ export function Nodes({children}: ReactProps<Node>){
 
    return (
         <>
-        <line geometry={lineGeoemetry} ref={lineRef} >
+        <line geometry ={lineGeoemetry} ref={lineRef} >
             <lineBasicMaterial attach = 'material' color ={'red'} ></lineBasicMaterial>
         </line>
         <Grid geom ={lineRef}/>

@@ -150,8 +150,8 @@ function Scene(children : any) {
     <>
       <OrbitControls ref={controls} target={[0, 0, 0]} position0={[0,0,25]} enablePan={true} enableZoom={true} enableRotate={false}/>
       <ambientLight intensity={2} color="white"></ambientLight>
-      {cellbases}
-      {cptbases}
+      {/* {cellbases} */}
+      {/* {cptbases} */}
       <MoveCamera controlsRef = {controls}></MoveCamera>
     </>
   );
@@ -166,8 +166,10 @@ function Plot() {
       >
       <ambientLight intensity={5}/> 
 
+
       <CursorTracker/>   
       <Nodes></Nodes>
+
     </Canvas>
   );
 }
