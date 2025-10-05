@@ -3,7 +3,9 @@ import { useDrag } from "@use-gesture/react";
 import * as THREE from 'three';
 import { useThree } from "@react-three/fiber";
 import { ReactProps } from "@react-three/fiber/dist/declarations/src/three-types";
-const spacing = 1;
+
+
+const spacing = 3;
 
 function computeGrids(box: THREE.Box3) : THREE.Vector3[]{
     const [minX,maxX] = [box.min.x, box.max.x];
@@ -21,10 +23,19 @@ function computeGrids(box: THREE.Box3) : THREE.Vector3[]{
     return grid.flat();
 }
 
+function Circle({pos, index, origin }:{pos:THREE.Vector3, index:number, origin:boolean}){
+  return(
+    <mesh position={pos} key = {index}>
+      <sphereGeometry args={[1]}/>
+      <meshStandardMaterial color = { origin? 'rgba(109, 208, 84, 1)':'rgba(242, 84, 245, 1)'}/>
+    </mesh>
+  )
+}
 function Grid({geom}: any) {
     const line: THREE.Line = geom.current;
     
     // Memoize the geometry creation
+    let origin = new THREE.Vector3(0,0,0);
     const geometry = useMemo(() => {
         if (!line?.geometry) return null;
         
@@ -37,17 +48,30 @@ function Grid({geom}: any) {
 
         const geom = new THREE.BufferGeometry();
         const array = new Float32Array(cachedGrid.length * 3);
+       
+       
         
+
         cachedGrid.forEach((pt, i) => {
             array[i * 3] = pt.x;
             array[i * 3 + 1] = pt.y;
             array[i * 3 + 2] = pt.z;
         });
 
+        
+        
         geom.setAttribute('position', new THREE.BufferAttribute(array, 3));
         geom.computeBoundingSphere();
         return geom;
     }, [line?.geometry.boundingBox]); // Only recreate when line changes
+    
+    // console.log()
+    let _points;
+    if (line){
+        const raycast = new THREE.Raycaster(origin,new THREE.Vector3(0,-1,0));
+        const intersected = raycast.intersectObject(line);
+        _points = (intersected.map(i => i.point));
+    }
 
     // Cleanup on unmount
     useEffect(() => {
@@ -61,9 +85,14 @@ function Grid({geom}: any) {
     if (!geometry) return null;
 
     return (
-        <points geometry={geometry}>
-            <pointsMaterial size={3} color="silver" />
-        </points>
+        <>
+            <points geometry={geometry}>
+                <pointsMaterial size={1} color="silver" />
+            </points>
+            <Circle pos ={origin}  index ={1} origin = {true}/>
+
+            {_points.length > 0 && _points.map((p,i) => (<Circle pos={p} index ={i} origin ={false}/>))}
+        </>
     );
 }
 
@@ -79,12 +108,18 @@ export function Nodes({children}: ReactProps<Node>){
     const lineRef = useRef(null);
 
     const colors = [
-        'rgba(226, 226, 19, 1)',
-        'rgba(38, 73, 230, 1)',
-        'rgba(253, 4, 4, 1)',
-        'rgba(66, 179, 141, 1)',
-        'rgba(233, 116, 248, 1)',
-        'rgba(47, 127, 219, 1)',
+        'rgba(235, 235, 228, 1)',
+        'rgba(235, 235, 228, 1)',
+        'rgba(235, 235, 228, 1)',
+        'rgba(235, 235, 228, 1)',
+        'rgba(235, 235, 228, 1)',
+        'rgba(235, 235, 228, 1)',
+        // 'rgba(226, 226, 19, 1)',
+        // 'rgba(38, 73, 230, 1)',
+        // 'rgba(253, 4, 4, 1)',
+        // 'rgba(66, 179, 141, 1)',
+        // 'rgba(233, 116, 248, 1)',
+        // 'rgba(47, 127, 219, 1)',
     ]
 
     const handleMove = (index:number, nPos:THREE.Vector3) =>{
@@ -97,7 +132,7 @@ export function Nodes({children}: ReactProps<Node>){
 
    return (
         <>
-        <line geometry ={lineGeoemetry} ref={lineRef} >
+        <line geometry ={lineGeoemetry} ref={lineRef}>
             <lineBasicMaterial attach = 'material' color ={'red'} ></lineBasicMaterial>
         </line>
         <Grid geom ={lineRef}/>
@@ -109,11 +144,22 @@ export function Nodes({children}: ReactProps<Node>){
                 onMove = {(newPos)=>{handleMove(positions[i].id, newPos)}}
                 />   
             ))
-            }         
+            }                     
         </>
     )
 }
 
+
+
+function SimpleLine(pointsAB: THREE.Vector3[]){
+    
+    const lineGeometry = new THREE. BufferGeometry().setFromPoints([...pointsAB]);
+    return (
+        <line geometry ={lineGeometry}>
+            <lineBasicMaterial attach = 'material' color ={'red'}/>
+        </line>
+    )
+}
 
 
 export function Node({position, color, onMove}:{position:THREE.Vector3, color:string, onMove:(newPos:THREE.Vector3)=>void}){

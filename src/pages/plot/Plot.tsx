@@ -14,6 +14,7 @@ type Point ={
 }
 
 type ThreeInput = [number, number, number];
+
 type CellBaseProps = {
   position: ThreeInput | THREE.Vector3;
   size: [width?: number, height?: number];
@@ -27,7 +28,9 @@ interface MoveCameraProps {
 
 const points : Point[]= parsePoints();
 const defaultPosition = points[2];
+
 function MoveCamera({controlsRef} : MoveCameraProps){
+
   const {camera, } = useThree();
   const [isMoved, setMoved] = useState(false);
   const pt = points[2];
@@ -150,23 +153,25 @@ function Scene(children : any) {
     <>
       <OrbitControls ref={controls} target={[0, 0, 0]} position0={[0,0,25]} enablePan={true} enableZoom={true} enableRotate={false}/>
       <ambientLight intensity={2} color="white"></ambientLight>
-      {/* {cellbases} */}
-      {/* {cptbases} */}
+      {cellbases}
+      {cptbases}
       <MoveCamera controlsRef = {controls}></MoveCamera>
     </>
   );
 }
 
+//Ortographic camera is affecting the mos
 function Plot() {
   const container = useRef(null);
   return (
-    <Canvas  orthographic camera={{ 
+    <Canvas   orthographic camera={{ 
       position: [0, 0, 10], 
       zoom:10}}  ref = {container}
       >
       <ambientLight intensity={5}/> 
 
 
+      {/* <Scene></Scene> */}
       <CursorTracker/>   
       <Nodes></Nodes>
 
