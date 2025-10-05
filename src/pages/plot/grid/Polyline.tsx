@@ -5,7 +5,7 @@ import { useThree } from "@react-three/fiber";
 import { ReactProps } from "@react-three/fiber/dist/declarations/src/three-types";
 
 
-const spacing = 3;
+const spacing = 1;
 
 function computeGrids(box: THREE.Box3) : THREE.Vector3[]{
     const [minX,maxX] = [box.min.x, box.max.x];
@@ -22,6 +22,43 @@ function computeGrids(box: THREE.Box3) : THREE.Vector3[]{
     }
     return grid.flat();
 }
+
+
+function  intersectAll(line:THREE.Line ,gridPoints:THREE.Vector3[]){
+    
+    if(!line) return;
+
+    let flags = [];
+    const direction = new THREE.Vector3(-1,0,0)
+    let origin = new THREE.Vector3(0,0,0);
+    const raycast = new THREE.Raycaster(origin,direction);
+    for (let i = 0; i < gridPoints.length; i++){
+        raycast.set(gridPoints[i],direction);
+        const intersected = raycast.intersectObject(line);
+        const isInside = intersected.length % 2 != 0;
+        flags.push(isInside);
+    }
+
+    return flags;
+
+}
+
+type Sieve = {
+inside: THREE.Vector3[];
+outside: THREE.Vector3[]
+}
+
+function sievePoints(flags : boolean[], gridPoints : THREE.Vector3[]) : Sieve {
+
+    const inside : THREE.Vector3[]= [];
+    const outside : THREE.Vector3[]= []
+    flags.forEach((side,index)=>{
+        if(side) inside.push(gridPoints[index])
+        else outside.push(gridPoints[index])
+    })
+    return {inside, outside};
+}
+
 
 function Circle({pos, index, origin }:{pos:THREE.Vector3, index:number, origin:boolean}){
   return(
@@ -46,38 +83,62 @@ function Grid({geom}: any) {
         const cachedGrid = computeGrids(boundingBox);
         if (!cachedGrid || cachedGrid.length === 0) return null;
 
-        const geom = new THREE.BufferGeometry();
-        const array = new Float32Array(cachedGrid.length * 3);
-       
-       
-        
+        // const geom = new THREE.BufferGeometry();
+        // const array = new Float32Array(cachedGrid.length * 3);
+        // cachedGrid.forEach((pt, i) => {
+        //     array[i * 3] = pt.x;
+        //     array[i * 3 + 1] = pt.y;
+        //     array[i * 3 + 2] = pt.z;
+        // });
 
-        cachedGrid.forEach((pt, i) => {
-            array[i * 3] = pt.x;
-            array[i * 3 + 1] = pt.y;
-            array[i * 3 + 2] = pt.z;
+        // geom.setAttribute('position', new THREE.BufferAttribute(array, 3));
+        // geom.computeBoundingSphere();
+            
+        const flags = intersectAll(line, cachedGrid);
+        const points = sievePoints(flags, cachedGrid);
+        console.log('inside:',points.inside.length, 'outside:', points.outside.length)
+        
+        const inside = new THREE.BufferGeometry();
+        const outside = new THREE.BufferGeometry();
+        
+        const insideArray = new Float32Array(points.inside.length * 3);
+        const outsideArray = new Float32Array(points.outside.length * 3);
+        
+        
+        points.inside.forEach((pt, i) => {
+            insideArray[i * 3] = pt.x;
+            insideArray[i * 3 + 1] = pt.y;
+            insideArray[i * 3 + 2] = pt.z;
         });
-
+        points.outside.forEach((pt, i) => {
+            outsideArray[i * 3] = pt.x;
+            outsideArray[i * 3 + 1] = pt.y;
+            outsideArray[i * 3 + 2] = pt.z;
+        });
+        inside.setAttribute('position', new THREE.BufferAttribute(insideArray, 3));
+        // inside.computeBoundingSphere();
+        outside.setAttribute('position', new THREE.BufferAttribute(outsideArray, 3));
+        // outside.computeBoundingSphere();
         
+        // return geom;
+        return {inside,outside};
         
-        geom.setAttribute('position', new THREE.BufferAttribute(array, 3));
-        geom.computeBoundingSphere();
-        return geom;
     }, [line?.geometry.boundingBox]); // Only recreate when line changes
     
-    // console.log()
-    let _points;
-    if (line){
-        const raycast = new THREE.Raycaster(origin,new THREE.Vector3(0,-1,0));
-        const intersected = raycast.intersectObject(line);
-        _points = (intersected.map(i => i.point));
-    }
+    // // console.log()
+    // let _points;
+    // if (line){
+    //     const raycast = new THREE.Raycaster(origin,new THREE.Vector3(0,-1,0));
+    //     const intersected = raycast.intersectObject(line);
+    //     _points = (intersected.map(i => i.point));
+    // }
 
     // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (geometry) {
-                geometry.dispose();
+                geometry.inside.dispose();
+                geometry.outside.dispose();
             }
         };
     }, [geometry]);
@@ -86,24 +147,26 @@ function Grid({geom}: any) {
 
     return (
         <>
-            <points geometry={geometry}>
-                <pointsMaterial size={1} color="silver" />
+            <points geometry={geometry.inside}>
+                <pointsMaterial size={4} color="green" />
             </points>
-            <Circle pos ={origin}  index ={1} origin = {true}/>
-
-            {_points.length > 0 && _points.map((p,i) => (<Circle pos={p} index ={i} origin ={false}/>))}
+            <points geometry={geometry.outside}>
+                <pointsMaterial size={4} color="red" />
+            </points>
+            <Circle pos ={origin}  index ={2} origin = {true}/>
+            {/* {_points.length > 0 && _points.map((p,i) => (<Circle pos={p} index ={i} origin ={false}/>))} */}
         </>
     );
 }
 
 export function Nodes({children}: ReactProps<Node>){
     const [positions, setPositions] = useState([
-        {id:0, position: new THREE.Vector3(0,0,0)},
-        {id:1, position: new THREE.Vector3(13,13,0)},
-        {id:2, position: new THREE.Vector3(1,13,0)},
-        {id:3, position: new THREE.Vector3(-12,13,0)},
-        {id:4, position: new THREE.Vector3(25,1,0)},
-        {id:5, position: new THREE.Vector3(-5,25,0)},
+        {id:0, position: new THREE.Vector3(10,0,0)},
+        {id:1, position: new THREE.Vector3(10,-10,0)},
+        {id:2, position: new THREE.Vector3(-10,-10,0)},
+        {id:3, position: new THREE.Vector3(-10,0,0)},
+        // {id:4, position: new THREE.Vector3(-10,10,0)},
+        // {id:5, position: new THREE.Vector3(-10,-10,0)},
     ]);
     const lineRef = useRef(null);
 
@@ -133,7 +196,7 @@ export function Nodes({children}: ReactProps<Node>){
    return (
         <>
         <line geometry ={lineGeoemetry} ref={lineRef}>
-            <lineBasicMaterial attach = 'material' color ={'red'} ></lineBasicMaterial>
+            <lineBasicMaterial attach = 'material' color ={'cyan'} linewidth ={500} ></lineBasicMaterial>
         </line>
         <Grid geom ={lineRef}/>
             {positions.map((pos, i) => (
