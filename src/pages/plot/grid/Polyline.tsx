@@ -32,6 +32,8 @@ function  intersectAll(line:THREE.Line ,gridPoints:THREE.Vector3[]){
     const direction = new THREE.Vector3(-1,0,0)
     let origin = new THREE.Vector3(0,0,0);
     const raycast = new THREE.Raycaster(origin,direction);
+    raycast.params.Points = {threshold: 0.01};
+    raycast.params.Line = {threshold: 0.01};
     for (let i = 0; i < gridPoints.length; i++){
         raycast.set(gridPoints[i],direction);
         const intersected = raycast.intersectObject(line);
