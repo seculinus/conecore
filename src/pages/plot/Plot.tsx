@@ -1,11 +1,12 @@
 import { parsePoints } from "../../utils/point";
 import { Canvas, ReactProps, ThreeElement, useThree } from "@react-three/fiber";
-import { GridCells,Node, Nodes } from "./grid";
+import {Node, Nodes } from "./components";
 import { useRef, useEffect, useState, Fragment, ReactNode } from "react";
 import { OrbitControls, Html, OrbitControlsProps } from "@react-three/drei";
 import * as THREE from "three";
 import "./Plot.css";
 import { RefObject } from "react";
+import { Container, Fullscreen,Root, Text } from "@react-three/uikit";
 
 type Point ={
   x: number;
@@ -48,6 +49,7 @@ function MoveCamera({controlsRef} : MoveCameraProps){
     </Html>
   )
 }
+
 function ReturnCameraXY(){}
 
 
@@ -168,12 +170,12 @@ function Plot() {
       position: [0, 0, 10], 
       zoom:10}}  ref = {container}
       >
+      <OrbitControls enableRotate ={false}></OrbitControls>
       <ambientLight intensity={5}/> 
 
-
-      {/* <Scene></Scene> */}
       <CursorTracker/>   
       <Nodes></Nodes>
+    <UIBase/>
 
     </Canvas>
   );
@@ -182,3 +184,17 @@ function Plot() {
 
 
 export default Plot;
+function UIBase(){
+
+  const {camera} = useThree();
+  const [newPixelSize, setPixelSize] =useState(0.01);
+
+  
+
+  return <Root sizeX={15} sizeY={5} pixelSize={0.01} flexDirection="row" padding={10} gap={105}>
+    <Container flexGrow={1} backgroundColor="red" />
+  
+    <Container flexGrow={1} backgroundColor="blue" />
+  </Root>;
+}
+
