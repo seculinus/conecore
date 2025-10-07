@@ -1,7 +1,6 @@
-import { useEffect, Ref, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import * as THREE from 'three';
 import { computeGrids, intersectAll, sievePoints } from "../utils/intersection";
-
 
 
 
@@ -13,6 +12,8 @@ function Circle({pos, index, origin }:{pos:THREE.Vector3, index:number, origin:b
     </mesh>
   )
 }
+
+
 export function Grid({geom}: any) {
     const line: THREE.Line = geom.current;
     
@@ -30,7 +31,7 @@ export function Grid({geom}: any) {
             
         const flags = intersectAll(line, cachedGrid);
         const points = sievePoints(flags, cachedGrid);
-        console.log('inside:',points.inside.length, 'outside:', points.outside.length)
+        // console.log('inside:',points.inside.length, 'outside:', points.outside.length)
         
         const inside = new THREE.BufferGeometry();
         const outside = new THREE.BufferGeometry();

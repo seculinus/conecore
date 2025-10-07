@@ -1,12 +1,13 @@
 import { parsePoints } from "../../utils/point";
 import { Canvas, ReactProps, ThreeElement, useThree } from "@react-three/fiber";
-import {Node, Nodes } from "./components";
+import {Node, Nodes, NavigationMenu } from "./components";
 import { useRef, useEffect, useState, Fragment, ReactNode } from "react";
 import { OrbitControls, Html, OrbitControlsProps } from "@react-three/drei";
 import * as THREE from "three";
 import "./Plot.css";
 import { RefObject } from "react";
 import { Container, Fullscreen,Root, Text } from "@react-three/uikit";
+
 
 type Point ={
   x: number;
@@ -90,9 +91,9 @@ interface Props{
 
 function CursorTracker({children}:Props){
   const [position, setPosition] = useState(new THREE.Vector3(0, 0, 0));
-  const {camera}  = useThree();
+  const {camera, size, viewport}  = useThree();
   const meshPos = new THREE.Vector3(0,0,-0.1);
-  
+
   return (
      <>
       <mesh 
@@ -165,36 +166,40 @@ function Scene(children : any) {
 //Ortographic camera is affecting the mos
 function Plot() {
   const container = useRef(null);
+  
   return (
-    <Canvas   orthographic camera={{ 
+
+  
+  <div style ={{position: 'relative', width: '100vw', height: '100vh'}}>
+    <NavigationMenu></NavigationMenu>
+   {/* <Tab></Tab> */}
+   <Canvas   orthographic camera={{ 
       position: [0, 0, 10], 
       zoom:10}}  ref = {container}
       >
       <OrbitControls enableRotate ={false}></OrbitControls>
       <ambientLight intensity={5}/> 
-
       <CursorTracker/>   
       <Nodes></Nodes>
-    <UIBase/>
-
     </Canvas>
+    </div>
   );
 }
 
 
 
 export default Plot;
-function UIBase(){
-
-  const {camera} = useThree();
-  const [newPixelSize, setPixelSize] =useState(0.01);
-
-  
-
-  return <Root sizeX={15} sizeY={5} pixelSize={0.01} flexDirection="row" padding={10} gap={105}>
-    <Container flexGrow={1} backgroundColor="red" />
-  
-    <Container flexGrow={1} backgroundColor="blue" />
-  </Root>;
+//It works on zoom, but not on span by camera
+function Tab(){
+  return (
+  <div style ={{ position:'absolute',
+      width:'100vw',
+      height:50,
+      border:"1px solid black",
+      top:5}}>
+      
+      </div>
+   
+      )
 }
 

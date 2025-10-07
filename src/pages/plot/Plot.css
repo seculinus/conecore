@@ -36,4 +36,105 @@
 }
 
 
+.navigation-container {
+  position: fixed;
+  top: 1.5rem; /* top-6 */
+  right: 1.5rem;
+  z-index: 50;
+}
 
+.navigation-panel {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.navigation-item {
+  position: relative;
+  width: 3rem;  /* 12 */
+  height: 3rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.navigation-item:hover {
+  transform: scale(1.05);
+}
+
+.navigation-item:active {
+  transform: scale(0.95);
+}
+
+.navigation-hover-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.navigation-item:hover .navigation-hover-overlay {
+  opacity: 1;
+}
+
+.navigation-icon {
+  position: relative;
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.navigation-item:hover .navigation-icon {
+  color: white;
+}
+
+.navigation-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  opacity: 0.6;
+}
+
+.navigation-tooltip {
+  position: absolute;
+  right: 100%;
+  margin-right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navigation-tooltip-arrow {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 0.5rem;
+  height: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
