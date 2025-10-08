@@ -1,3 +1,3 @@
-export const file = {
+export const configuration = {
     spacing: 1,
 }

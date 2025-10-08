@@ -1,17 +1,25 @@
-import  { useState } from 'react';
+import  { ReactNode, RefObject, useState } from 'react';
 import { motion } from 'motion/react';
 import '../Plot.css';
+import * as THREE from "three";
+import {useContext} from 'react'
+import { CameraContext } from './CameraContext';
+
 interface NavigationItem {
   id: string;
   label: string;
   icon: React.ReactNode;
   color: string;
-  onClick: () => void;
+  onClick: (props?:any) => void;
 }
+
 
 export function NavigationMenu() {
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+   const {camera } = useContext(CameraContext);
+
 
   const handleItemClick = (id: string, action: () => void) => {
     setActiveItem(id);
@@ -111,7 +119,15 @@ export function NavigationMenu() {
           <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
         </svg>
       ),
-      onClick: () => console.log('Toggle fullscreen')
+      // onClick: () => console.log('Toggle fullscreen')
+      onClick: ()=>{
+        console.log('Triggered')
+        console.log(camera)
+       camera.position.set(50,camera.position.y,camera.position.z);
+       camera.lookAt(502,0,0)
+       camera.updateProjectionMatrix();
+     
+      },
     },
     {
       id: 'settings',
@@ -146,7 +162,7 @@ return (
                   ? `${item.color}40`
                   : 'rgba(255, 255, 255, 0.05)',
             }}
-            transition={{ duration: 0.2 }}
+     
           >
             <motion.div
               className="navigation-hover-overlay"
@@ -164,9 +180,7 @@ return (
                     ? item.color
                     : undefined,
               }}
-              animate={{
-                rotate: activeItem === item.id ? 360 : 0,
-              }}
+  
               transition={{ duration: 0.5 }}
             >
               {item.icon}

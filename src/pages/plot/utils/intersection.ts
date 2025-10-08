@@ -1,8 +1,9 @@
 import * as THREE from "three";
 
+import { configuration } from "@/src/config/config";
+//TODO: TO BE USED LATER the config file 
 
 const spacing = 3;
-
 export function computeGrids(box: THREE.Box3): THREE.Vector3[] {
     const [minX, maxX] = [box.min.x, box.max.x];
     const [minY, maxY] = [box.min.y, box.max.y];

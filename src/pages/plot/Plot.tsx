@@ -1,12 +1,12 @@
 import { parsePoints } from "../../utils/point";
-import { Canvas, ReactProps, ThreeElement, useThree } from "@react-three/fiber";
-import {Node, Nodes, NavigationMenu } from "./components";
-import { useRef, useEffect, useState, Fragment, ReactNode } from "react";
-import { OrbitControls, Html, OrbitControlsProps } from "@react-three/drei";
+import { Canvas, useThree } from "@react-three/fiber";
+import {Nodes, NavigationMenu } from "./components";
+import { useRef, useEffect, useState, useContext, ReactNode } from "react";
+import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import "./Plot.css";
 import { RefObject } from "react";
-import { Container, Fullscreen,Root, Text } from "@react-three/uikit";
+import { CameraContext } from "./components/CameraContext";
 
 
 type Point ={
@@ -167,25 +167,40 @@ function Scene(children : any) {
 function Plot() {
   const container = useRef(null);
   
+  const [cameraState, setCamera] = useState(null);
   return (
 
   
   <div style ={{position: 'relative', width: '100vw', height: '100vh'}}>
+   <CameraContext.Provider value ={{camera: cameraState, setCamera}}>
+    <Canvas className ="wrapper" orthographic camera={{ position: [0, 0, 10], zoom:10}}  ref = {container}>
+        <CameraBridge></CameraBridge>
+        <OrbitControls enableRotate ={false}></OrbitControls>
+        <ambientLight intensity={5}/> 
+        <CursorTracker/>   
+        <Nodes></Nodes>
+      </Canvas>
     <NavigationMenu></NavigationMenu>
-   {/* <Tab></Tab> */}
-   <Canvas   orthographic camera={{ 
-      position: [0, 0, 10], 
-      zoom:10}}  ref = {container}
-      >
-      <OrbitControls enableRotate ={false}></OrbitControls>
-      <ambientLight intensity={5}/> 
-      <CursorTracker/>   
-      <Nodes></Nodes>
-    </Canvas>
-    </div>
+  </CameraContext.Provider>
+  </div>
+
   );
 }
 
+function CameraBridge(){
+  
+  const {setCamera} = useContext(CameraContext);
+  const {camera}= useThree();
+
+  useEffect(()=>{
+    setCamera(camera);
+  },[camera, setCamera])
+  return null;
+  
+}
+
+function UserInterface(){
+}
 
 
 export default Plot;
