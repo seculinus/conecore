@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import '../Plot.css';
 import * as THREE from "three";
 import {useContext} from 'react'
-import { CameraContext } from './CameraContext';
+import { StateContext } from './StateContext';
 
 interface NavigationItem {
   id: string;
@@ -18,7 +18,7 @@ export function NavigationMenu() {
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-   const {camera } = useContext(CameraContext);
+   const {stateContext } = useContext(StateContext);
 
 
   const handleItemClick = (id: string, action: () => void) => {
@@ -95,7 +95,14 @@ export function NavigationMenu() {
           <path d="M8 16H3v5"/>
         </svg>
       ),
-      onClick: () => console.log('Reset camera view')
+      onClick: () => {
+        const posCamera = stateContext.camera.position;
+          stateContext.camera.position.set(0, 0, 10);
+          stateContext.controls.target.set(stateContext.camera.position.x, stateContext.camera.position.y,0);
+          stateContext.controls.update(); 
+        console.log('Reset camera view')
+      
+      }
     },
     {
       id: 'wireframe',
@@ -121,11 +128,25 @@ export function NavigationMenu() {
       ),
       // onClick: () => console.log('Toggle fullscreen')
       onClick: ()=>{
-        console.log('Triggered')
-        console.log(camera)
-       camera.position.set(50,camera.position.y,camera.position.z);
-       camera.lookAt(502,0,0)
-       camera.updateProjectionMatrix();
+
+        //Third time the charm with state
+          // console.log(stateContext);
+          const posCamera = stateContext.camera.position;
+          console.log(stateContext.camera.position);
+          console.log(stateContext.controls.target);
+          stateContext.camera.position.set(50, 5, 5);
+          stateContext.controls.target.set(stateContext.camera.position.x, stateContext.camera.position.y,0);
+          stateContext.controls.update();
+
+        
+        //Second Time with Controls
+        // control.control.current.target.set(new THREE.Vector3(-25,0,0));
+        // control.control.current.update();
+        
+        //First Time with Camera
+      //  camera.position.set(50,camera.position.y,camera.position.z);
+      //  camera.lookAt(502,0,0)
+      //  camera.updateProjectionMatrix();
      
       },
     },
