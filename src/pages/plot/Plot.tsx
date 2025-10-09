@@ -1,4 +1,4 @@
-import { parsePoints } from "../../utils/point";
+import { parsePoints, PointBase } from "./utils/point";
 import { Canvas, useThree } from "@react-three/fiber";
 import {Nodes, NavigationMenu } from "./components";
 import { useRef, useEffect, useState, useContext, ReactNode } from "react";
@@ -8,21 +8,16 @@ import { RefObject } from "react";
 import { StateContext } from "./components/StateContext";
 import { CursorTracker } from "./components/CursorTracker";
 import { OrbitControlsProps } from "@react-three/drei";
+import { Cells } from "./Cells";
 
-export type Point = {
-  x: number;
-  y:number;
-  name:string;
-}
-
+export const points : PointBase[] = parsePoints();
+const defaultPosition = points[2];
 
 interface ControlProps {
   controlsRef: RefObject<React.ComponentRef<typeof OrbitControls>>;
 }
 
 
-export const points : Point[] = parsePoints();
-const defaultPosition = points[2];
 
 export function MoveCamera({controlsRef} : ControlProps){
 
@@ -52,7 +47,7 @@ function Plot() {
   
   <div style ={{position: 'relative', width: '100vw', height: '100vh'}}>
    <StateContext.Provider value ={{stateContext, setState}}>
-    <Canvas className ="wrapper" orthographic camera={{ position: [0, 0, 10], zoom:10}}  >
+    <Canvas className ="wrapper" orthographic camera={{ position: [0, 0, 10]}}  >
         <ControlBridge/>
         <OrbitControls makeDefault ={true} enableRotate ={false}/>
         <ambientLight intensity={5}/> 
@@ -89,7 +84,7 @@ function Tab(){
       height:50,
       border:"1px solid black",
       top:5}}>
-      
+        
       </div>
    )
 }

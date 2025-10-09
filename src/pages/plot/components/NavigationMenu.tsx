@@ -4,7 +4,7 @@ import '../Plot.css';
 import * as THREE from "three";
 import {useContext} from 'react'
 import { StateContext } from './StateContext';
-
+import { points } from '../Plot';
 interface NavigationItem {
   id: string;
   label: string;
@@ -17,8 +17,7 @@ interface NavigationItem {
 export function NavigationMenu() {
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
-   const {stateContext } = useContext(StateContext);
+  const {stateContext } = useContext(StateContext);
 
 
   const handleItemClick = (id: string, action: () => void) => {
@@ -98,8 +97,11 @@ export function NavigationMenu() {
       onClick: () => {
         const posCamera = stateContext.camera.position;
           stateContext.camera.position.set(0, 0, 10);
+          stateContext.camera.zoom = 10;
+          stateContext.camera.updateProjectionMatrix();
           stateContext.controls.target.set(stateContext.camera.position.x, stateContext.camera.position.y,0);
           stateContext.controls.update(); 
+          
         console.log('Reset camera view')
       
       }
@@ -134,7 +136,10 @@ export function NavigationMenu() {
           const posCamera = stateContext.camera.position;
           console.log(stateContext.camera.position);
           console.log(stateContext.controls.target);
-          stateContext.camera.position.set(50, 5, 5);
+          stateContext.camera.zoom = .55;
+          stateContext.camera.position.set(points[2].x, points[2].y
+            , 15);
+            stateContext.camera.updateProjectionMatrix();
           stateContext.controls.target.set(stateContext.camera.position.x, stateContext.camera.position.y,0);
           stateContext.controls.update();
 
