@@ -1,6 +1,6 @@
-import { Point } from "../Plot";
+import { PointBase } from "../utils/point";
 
-export function CPTBase({ radius, position }: { radius: number; position: Point; }) {
+export function CPTBase({ radius, position }: { radius: number; position: PointBase; }) {
   return (
     <mesh position={[position.x, position.y, 0]}>
       <sphereGeometry args={[radius]} />

@@ -1,7 +1,6 @@
+import * as THREE from 'three';
 import { useState } from "react";
 import { LabelCellBase } from "./LabelCellBase";
-
-import * as THREE from 'three';
 
 type ThreeInput = [number, number, number];
 export type CellBaseProps = {
@@ -21,7 +20,7 @@ export function CellBase({ position, size, name }: CellBaseProps) {
     e.stopPropagation();
     setIsHovered(false);
   };
-  // rotation = {[new THREE.Vector3(0,0,1), Math.PI/4}
+
   return (
     <>
       <mesh rotation={[0, 0, .1 * Math.PI / 180]} position={position} onPointerEnter={handlePointerOver} onPointerLeave={handlePointerLeave}>

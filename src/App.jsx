@@ -11,6 +11,7 @@ import Settings from './pages/Settings';
 import Decompose from './pages/Decompose';
 import { BrowserRouter ,Routes, Route } from 'react-router-dom';
 
+
 function App() {
   return (
 
@@ -28,6 +29,7 @@ function App() {
       </Route>
     </Routes>
     </BrowserRouter>
+
 
   );
 }

@@ -1,6 +1,15 @@
-class Point{
+export type PointBase = {
+  x: number;
+  y:number;
+  name:string;
+}
 
-    constructor(x,y, name) {
+class Point {
+    x:number;
+    y:number;
+    name:string;
+    
+    constructor(x: number,y:number,name:string) {
         this.x = x;
         this.y = y;
         this.name = name;

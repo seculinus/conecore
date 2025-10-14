@@ -5,12 +5,13 @@
     "target": "esnext",
     "jsx": "preserve",
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution":"bundler",
     "strict": true,
+    "module": "esnext",
     "strictNullChecks": false,
 "paths": {
   "@/*": [
-    "./*"
+    "./*", "./src/*"
   ],
   "react": [ "./node_modules/@types/react" ]
 },

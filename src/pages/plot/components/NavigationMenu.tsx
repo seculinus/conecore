@@ -19,14 +19,13 @@ export function NavigationMenu() {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const {stateContext } = useContext(StateContext);
 
-
   const handleItemClick = (id: string, action: () => void) => {
     setActiveItem(id);
     action();
     // Reset active state after animation
     setTimeout(() => setActiveItem(null), 200);
   };
-
+  console.log("helloTom")
   const navigationItems: NavigationItem[] = [
     {
       id: 'orbit',
@@ -95,11 +94,16 @@ export function NavigationMenu() {
         </svg>
       ),
       onClick: () => {
+      if (!stateContext?.controls || !stateContext?.camera) {
+          console.warn('State context or Controls not ready');
+          return;
+        }
+        
         const posCamera = stateContext.camera.position;
           stateContext.camera.position.set(0, 0, 10);
           stateContext.camera.zoom = 10;
           stateContext.camera.updateProjectionMatrix();
-          stateContext.controls.target.set(stateContext.camera.position.x, stateContext.camera.position.y,0);
+          stateContext.controls.target.set(0,0,10);
           stateContext.controls.update(); 
           
         console.log('Reset camera view')
@@ -130,9 +134,12 @@ export function NavigationMenu() {
       ),
       // onClick: () => console.log('Toggle fullscreen')
       onClick: ()=>{
-
+        if (!stateContext?.controls || !stateContext?.camera) {
+          console.warn('State context or Controls not ready');
+          return;
+        }
         //Third time the charm with state
-          // console.log(stateContext);
+          console.log(stateContext);
           const posCamera = stateContext.camera.position;
           console.log(stateContext.camera.position);
           console.log(stateContext.controls.target);
