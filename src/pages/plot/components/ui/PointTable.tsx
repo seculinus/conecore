@@ -2,6 +2,8 @@ import { Box } from "@chakra-ui/react"
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useState, useMemo } from "react";
 import { DATA } from "./data";
+import { EditableCell } from "./EditableCell";
+import { StatusCell } from "./StatusCell";
 
 type Test = {
     task: string
@@ -17,12 +19,15 @@ export function PointTable(){
     const columns = useMemo(()=>  [{ 
             accessorKey: 'task',
             header:"Task",
-            cell: (props) => <p>{props.getValue()}</p>
+            size:225,
+            // cell: (props) => <p>{props.getValue()}</p>
+            cell:EditableCell
         },
         { 
             accessorKey: 'status',
             header:"Status",
-            cell: (props) => <p>{props.getValue()}</p>
+            // cell: (props) => <p>{props.getValue()}</p>
+            cell: StatusCell
         },
         { 
             accessorKey: 'due',
@@ -38,10 +43,25 @@ export function PointTable(){
     const table = useReactTable({
         data,
         columns,
-        getCoreRowModel: getCoreRowModel()
+        getCoreRowModel: getCoreRowModel(),
+        columnResizeMode:"onEnd",
+        meta:{ 
+            updateData: (rowIndex, columnId, value)=>
+                setData((prev) => 
+                    prev.map((row,index) => 
+                        index === rowIndex
+                      ? {
+                            ...prev[rowIndex],
+                            [columnId]:value
+                        }: row
+            ))
+            //Add ways to keep data synced in the table, since changes in the editable cell will not result in a refreshed data state
+
+        }
     });
     // console.log(table.getHeaderGroups());
     console.log("Creating Table")
+    console.log(data)
     return(
         <Box>
             <Box className ="table" w ={table.getTotalSize()}  style={{ bottom:500,position:'relative'}}>
@@ -50,6 +70,17 @@ export function PointTable(){
                         {headerGroup.headers.map(header => (
                             <Box className= "th" w ={header.getSize()} key ={header.id}>
                                 {header.column.columnDef.header}
+                                <Box 
+                                
+                                onMouseDown = {
+                                    header.getResizeHandler()
+                                }
+                                onTouchStart = {
+                                    header.getResizeHandler()
+                                }
+                                className ={`resizer ${
+                                    header.column.getIsResizing()? "isResizing" : ""} 
+                                `}/>
                             </Box>
                         ))}
                         </Box>
