@@ -1,6 +1,8 @@
 
 const STATUS_ON_MISSING = {id:1, name:"Missing", color:"pink.300"}
-const STATUS_ON_FILLING= {id:1, name:"Fill", color:"green.300"}
+const STATUS_ON_FILLING= {id:2, name:"Fill", color:"green.300"}
+const STATUS_ON_ACTING= {id:3, name:"Acting", color:"cyan.300"}
+const STATUS_ON_CRYING= {id:4, name:"Cryuing", color:"orange.300"}
 
 
 export const DATA = [
@@ -16,8 +18,22 @@ export const DATA = [
         due: new Date("2024/10/15"),
         notes: "This is a test",
     },
+    {
+        task: "Add a 3rd geature",
+        status: STATUS_ON_ACTING,
+        notes: "This is a test",
+    },
+    {
+        task: "Add a 4d geature",
+        status: STATUS_ON_CRYING,
+        notes: "This is a test",
+    },
 ]
 
-export const STATUSES = {
-    STATUS_ON_FILLING, STATUS_ON_MISSING
-}
+
+export const STATUSES = [
+    STATUS_ON_FILLING, 
+    STATUS_ON_MISSING,
+    STATUS_ON_ACTING,
+    STATUS_ON_CRYING
+]

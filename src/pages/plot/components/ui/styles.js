@@ -59,6 +59,7 @@ const styles = {
     "*:hover > .resizer": {
       opacity: 1,
     },
+
   },
 };
 

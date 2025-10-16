@@ -1,15 +1,17 @@
 import { Menu, Button, Portal} from "@chakra-ui/react"
 import { STATUSES } from "./data";
-// --hover-color:#272A31;
-// --inactive-color:#808487;
+import { Box } from "@chakra-ui/react";
 
+export function ColorIcon({color, ...props}){
+    return (
+<Box w="12px" h ="12px" bg ={color} borderRadius="3px" {...props}>
+</Box>
+    )
+}
 
-export function StatusCell({getValue}){
-    const {
-        name,color
-    } = getValue() || {};
-
-    const {updateData} = table.data.options.meta;''
+export function StatusCell({getValue,row,column,table}){
+    const { name,color} = getValue() || {};
+    const {updateData} = table.options.meta;
 
     return (
 
@@ -33,20 +35,29 @@ export function StatusCell({getValue}){
             </Menu.Trigger>
             <Portal>
                 <Menu.Positioner>
-                    <Menu.Content>
-                        {STATUSES.map(status=>{
-                            <Menu.Item 
-                                onClick = {
-                                    //function that updates our table state
-
-                                }
-                            >{status.name}</Menu.Item>
-                        })}
-                        <Menu.Item value = "new-txt">Download</Menu.Item>
-                        <Menu.Item value = "new-file">Create a Copy</Menu.Item>
-                        <Menu.Item>Mark as a Draft</Menu.Item>
-                        <Menu.Item>Delte</Menu.Item>
-                        <Menu.Item>Attend a workshop</Menu.Item>
+                    <Menu.Content  >
+                            <Menu.Item className = "menuStatuses"
+                                background={'#272A31'}
+                                color ={'#808487'}
+                                onClick = {() => updateData(row.index, column.id, null)}
+                                key = {-1}    
+                            >
+                                <ColorIcon color = {'red.400'} mr ={3}/>
+                                Reset
+                            </Menu.Item>
+                        
+                        {STATUSES.map(status=>
+                       
+                            <Menu.Item className = "menuStatuses"
+                                background={'#272A31'}
+                                color ={'#808487'}
+                                onClick = {() => updateData(row.index, column.id, status)}
+                                key = {status.id}    
+                            >
+                                <ColorIcon color = {status.color} mr ={3}/>
+                                {status.name}
+                            </Menu.Item>
+                        )}
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>

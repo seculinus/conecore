@@ -1,9 +1,11 @@
 import { Box } from "@chakra-ui/react"
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table"
 import { useState, useMemo } from "react";
 import { DATA } from "./data";
 import { EditableCell } from "./EditableCell";
 import { StatusCell } from "./StatusCell";
+import { DateCell } from "./DateCell";
+import { Filters } from "./Filters";
 
 type Test = {
     task: string
@@ -11,12 +13,7 @@ type Test = {
     due:Date
     notes:string
 }
-
-export function PointTable(){
-    console.log("PointTable rendered"); // Add this
-    const [data, setData] = useState<Test[]>(DATA);
-    
-    const columns = useMemo(()=>  [{ 
+const columns =  [{ 
             accessorKey: 'task',
             header:"Task",
             size:225,
@@ -32,19 +29,32 @@ export function PointTable(){
         { 
             accessorKey: 'due',
             header:"Due",
-            cell: (props) => <p>{props.getValue()?.toLocaleTimeString()}</p>
+            // cell: (props) => <p>{props.getValue()?.toLocaleTimeString()}</p>
+            cell: DateCell,
         },
         { 
             accessorKey: 'notes,',
             header:"Notes",
-            cell: (props) => <p>{props.getValue()}</p>
-        }],  [])
+            // cell: (props) => <p>{props.getValue()}</p>
+            cell:EditableCell,
+        }]
+
+export function PointTable(){
+  
+    const [data, setData] = useState<Test[]>(DATA);
+    const [columnFilters, setColumnFilters] = useState([
+
+    ]);
 
     const table = useReactTable({
         data,
         columns,
+        state :{
+            columnFilters,
+        },
         getCoreRowModel: getCoreRowModel(),
-        columnResizeMode:"onEnd",
+        getFilteredRowModel: getFilteredRowModel(),
+        columnResizeMode:"onChange",
         meta:{ 
             updateData: (rowIndex, columnId, value)=>
                 setData((prev) => 
@@ -61,10 +71,32 @@ export function PointTable(){
     });
     // console.log(table.getHeaderGroups());
     console.log("Creating Table")
-    console.log(data)
+    console.log(columnFilters)
     return(
-        <Box>
-            <Box className ="table" w ={table.getTotalSize()}  style={{ bottom:500,position:'relative'}}>
+        <Box 
+        
+        // style={{ 
+        //     bottom:600,
+        //     position:'relative'
+        // }}
+
+        style={{ 
+                position: 'absolute', // Takes it out of the flow
+                top: '650px',         // Clear previous relative style influences
+                left: 0,              // Start from the left edge
+                bottom: 'unset',      // Clear bottom, or set it (e.g., bottom: 10)
+                // You likely want to use a combination of top/bottom and left/right
+                // For your previous 'bottom:600' style, let's use 'top' for control.
+                // top: '50px', // Example: 50px from the top of the nearest positioned ancestor (usually body)
+                // left: '20px' // Example: 20px from the left
+            }}
+        
+        >
+            <Filters 
+            columnFilters = {columnFilters}
+            setColumnFilters = {setColumnFilters}
+        />
+            <Box className ="table" w ={table.getTotalSize()}  >
                 {table.getHeaderGroups().map(headerGroup=> (
                     <Box className = "tr" key = {headerGroup.id}>
                         {headerGroup.headers.map(header => (

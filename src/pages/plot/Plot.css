@@ -60,9 +60,6 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-
-
-
 p,
 label {
   margin: 0.4rem 0;
@@ -71,12 +68,11 @@ label {
   color:var(--inactive-color);
 }
 
-.pointmap-row-header{
-  border-bottom: 1px solid  var(--inactive-color)
-}
 
 input{
   gap:100px;
+  margin: 10px;
+  padding:10px;
   margin: 0.4rem,0;
   width:5rem;
   color:var(--inactive-color);
@@ -84,24 +80,11 @@ input{
 }
 
 input:focus{
-  /* background:red; */
-  /* color:var(--main-color); */
-  /* font-size: larger; */
   border:none;
-  /* border: 1px solid green; */
+  color:var(--primary-color)
 }
-.pointmap-row-header{
-  display:grid;
-  grid-template-columns: repeat(3,1fr);
-  gap:1.3rem;
-  text-align: center;
-  /* bac  kground: rgba(255, 255, 255, 0.05); */
-}
-.pointmap-grid{
-  display:grid;
-  grid-template-columns: repeat(1,1fr);
-  gap:1.3rem;
-}
+
+
 
 
 .navigation-grid {
