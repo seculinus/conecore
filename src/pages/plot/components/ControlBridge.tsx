@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef } from "react";
 import { StateContext } from "./StateContext";
 
 export function ControlBridge(): any {
-  console.log("helloJane")
+  // console.log("helloJane")
   const state = useThree(); 
   const { setState } = useContext(StateContext);
   const hasSetState = useRef(false);

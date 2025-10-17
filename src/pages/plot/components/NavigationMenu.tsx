@@ -25,7 +25,7 @@ export function NavigationMenu() {
     // Reset active state after animation
     setTimeout(() => setActiveItem(null), 200);
   };
-  console.log("helloTom")
+  // console.log("helloTom")
   const navigationItems: NavigationItem[] = [
     {
       id: 'orbit',
