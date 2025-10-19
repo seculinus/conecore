@@ -22,13 +22,13 @@ export function CursorTracker({ children }: Props) {
         <planeGeometry args={[2e7, 2e7]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
-      <Html className="content" distanceFactor={400} position={camera.position}>
-        <div>
+      {/* <Html className="content" distanceFactor={400} position={camera.position}>
+        <>
           <span style={{ color: '#FFCCCB' }}>X:{(position.x).toFixed(2)}</span>
           <span style={{ color: '#CCFEFF' }}>Y:{position.y.toFixed(2)}</span>
           {children}
-        </div>
-      </Html>
+        <>
+      </Html> */}
     </>
   );
 }

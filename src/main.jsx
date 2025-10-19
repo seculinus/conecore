@@ -1,10 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 import App from './App.jsx'
 import { ChakraProvider } from "@chakra-ui/react";
-// import { system } from '@chakra-ui/react/preset';
-import { system } from './pages/plot/components/ui/theme';
+import { system } from './theme/globalTheme.js';
+// import { plotSystem } from './pages/plot/theme.js';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ChakraProvider value={system}>
@@ -12,3 +11,4 @@ createRoot(document.getElementById('root')).render(
     </ChakraProvider>
   </StrictMode>
 )
+ 

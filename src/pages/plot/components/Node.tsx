@@ -7,7 +7,7 @@ import * as THREE from "three";
 
 export function Node({ position, color, onMove }: { position: THREE.Vector3; color: string; onMove: (newPos: THREE.Vector3) => void; }) {
 
-    const { size, camera, pointer } = useThree();
+    const { size, camera} = useThree();
     const [hovered, setHovered] = useState(false);
     const [pos, setPos] = useState(position);
     const startNodeRef = useRef(new THREE.Vector3());

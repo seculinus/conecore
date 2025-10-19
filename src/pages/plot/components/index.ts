@@ -1,9 +1,12 @@
 
 import { Nodes } from "./Nodes";
 import { Node } from "./Node";
-import { NavigationMenu } from "./NavigationMenu";
+import { NavigationItems, NavigationMenu, EditItems } from "./ui/navigation";
 export {
     Node,
     Nodes,
-    NavigationMenu
+    NavigationMenu,
+    NavigationItems,
+    EditItems
+    
 } 

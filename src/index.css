@@ -9,17 +9,8 @@
   color-scheme: light dark;
   color: var(--text-color);
   /* background-color: #242424; */
-  background-color: var(--main-color);
+  /* background-color: var(--main-color); */
   /* border:1px solid salmon */
 
 }
 
-
-
-/* @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-} */
